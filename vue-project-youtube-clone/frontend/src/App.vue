@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <router-view name="NavBar"></router-view>
+    <router-view name="StudioNavBar"></router-view>
 
     <v-main class="grey lighten-5">
       <router-view></router-view>
@@ -10,6 +11,6 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
 };
 </script>

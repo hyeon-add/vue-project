@@ -1,12 +1,32 @@
 <template>
   <nav>
-    <v-app-bar app clipped-left flat class="white">
+    <v-app-bar app clipped-left class="white">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>
         <router-link class="black--text" to="/">Vuetube</router-link>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+      <v-menu offset-y left>
+        <template v-slot:activator="{ on }">
+          <v-btn outlined tile color="grey darken-1" class="mr-5" v-on="on">
+            <v-icon left color="red" size="26">mdi-video-plus</v-icon>
+            만들기
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-list>
+            <v-list-item @click="openDialogUploadVideo">
+              <v-list-item-icon>
+                <v-icon>mdi-upload</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>동영상 업로드</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
 
       <v-btn
         outlined
@@ -83,45 +103,42 @@
     </v-app-bar>
 
     <v-navigation-drawer app clipped v-model="drawer">
-      <v-list dense nav>
-        <v-list-item router to="/">
-          <v-list-item-icon>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>홈</v-list-item-title>
-        </v-list-item>
-        <v-list-item router to="/subscriptions">
-          <v-list-item-icon>
-            <v-icon>mdi-youtube-subscription</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>구독</v-list-item-title>
-        </v-list-item>
-
-        <v-divider class="my-3"></v-divider>
-
-        <v-list-item router to="/history">
-          <v-list-item-icon>
-            <v-icon>mdi-history</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>시청 기록</v-list-item-title>
-        </v-list-item>
-
-        <v-divider class="my-3"></v-divider>
-
-        <v-subheader>구독</v-subheader>
-      </v-list>
+      <v-list-item exact router to="/studio">
+        <v-list-item-icon>
+          <v-icon>mdi-view-dashboard</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>대시보드</v-list-item-title>
+      </v-list-item>
+      <v-list-item router to="/studio/videos">
+        <v-list-item-icon>
+          <v-icon>mdi-play-box-multiple</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>콘텐츠</v-list-item-title>
+      </v-list-item>
     </v-navigation-drawer>
+
+    <!-- 비디오 업로드 모달 -->
+    <UploadVideoModal
+      :openDialog="statusDialogUploadVideo"
+      v-on:closeDialog="closeDialogUploadVideo"></UploadVideoModal>
   </nav>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
+import UploadVideoModal from '@/components/Modal/UploadVideoModal.vue';
+
 export default {
-  name: 'NavBar',
+  name: 'StudioNavBar',
 
   data: () => ({
     drawer: true,
+    statusDialogUploadVideo: false,
   }),
+
+  components: {
+    UploadVideoModal,
+  },
 
   computed: {
     ...mapGetters({
@@ -140,8 +157,18 @@ export default {
 
   methods: {
     ...mapActions({
+      // 로그아웃
       AC_SIGN_OUT: 'AC_SIGN_OUT',
     }),
+    // 비디오 업로드 모달 열기
+    openDialogUploadVideo() {
+      console.log('-- open');
+      this.statusDialogUploadVideo = true;
+    },
+    closeDialogUploadVideo() {
+      console.log('-- close');
+      this.statusDialogUploadVideo = false;
+    },
   },
 };
 
