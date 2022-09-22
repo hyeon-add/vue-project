@@ -55,7 +55,29 @@
       </v-tab-item>
 
       <!-- 실시간 스트리밍 -->
-      <v-tab-item> </v-tab-item>
+      <v-tab-item>
+        <table>
+          <thead>
+            <tr>
+              <th>동영상</th>
+              <th>공개상태</th>
+              <th>조회수</th>
+              <!-- <th>댓글</th> -->
+              <th>좋아요</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="video in videos" :key="video.id">
+              <td>{{ video.title }}</td>
+              <td>{{ video.status }}</td>
+              <td>{{ video.views }}</td>
+              <td>{{ video.likes }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </v-tab-item>
     </v-tabs-items>
   </div>
 </template>

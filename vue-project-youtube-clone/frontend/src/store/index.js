@@ -63,7 +63,7 @@ export default new Vuex.Store({
     },
     AC_SIGN_UP({ commit }, data) {
       return new Promise((resolve, reject) => {
-        AuthService.signIn(data)
+        AuthService.signUp(data)
           .then((response) => {
             console.log('AC_SIGN_UP - response : ', response);
             commit('MU_SET_TOKEN', response.data.token);
@@ -73,6 +73,24 @@ export default new Vuex.Store({
           .catch((error) => {
             console.log('AC_SIGN_UP - error : ', error);
             reject(error);
+          });
+      });
+    },
+    AC_SIGN_OUT({ commit }, token) {
+      return new Promise((resolve, reject) => {
+        AuthService.signOut(token)
+          .then((response) => {
+            console.log('AC_SIGN_OUT - response : ', response);
+            resolve(response.data.data);
+          })
+          .catch((error) => {
+            console.log('AC_SIGN_OUT - error : ', error);
+            reject(error);
+          })
+          .finally(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            commit('MU_CLEAR_AUTH');
           });
       });
     },
@@ -91,10 +109,20 @@ export default new Vuex.Store({
           });
       });
     },
-    AC_SIGN_OUT({ commit }) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      commit('MU_CLEAR_AUTH');
+    AC_UPDATE_USER_DATA({ commit }, token) {
+      return new Promise((resolve, reject) => {
+        AuthService.updateUserData(token)
+          .then((response) => {
+            console.log('AC_UPDATE_USER_DATA - response : ', response);
+            commit('MU_SET_USER', response.data.data);
+            localStorage.setItem('user', JSON.stringify(response.data.data));
+            resolve(response.data.data);
+          })
+          .catch((error) => {
+            console.log('AC_UPDATE_USER_DATA - error : ', error);
+            reject(error);
+          });
+      });
     },
   },
   modules: {},

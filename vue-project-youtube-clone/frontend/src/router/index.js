@@ -25,21 +25,45 @@ const routes = [
     component: () => import('@/views/Auth/SignUp.vue'),
   },
   {
-    path: '/studio',
+    path: '/setting',
+    name: 'Setting',
     components: {
       StudioNavBar,
-      default: () => import('@/views/Studio/Index.vue'),
+      default: () => import('@/views/Setting.vue'),
+    },
+  },
+  {
+    path: '/VuetubeStudio',
+    components: {
+      StudioNavBar,
+      default: () => import('@/views/VuetubeStudio.vue'),
     },
     children: [
       {
         path: '/',
         name: 'Dashboard',
-        component: () => import('@/views/Studio/Dashboard.vue'),
+        component: () => import('@/views/VuetubeStudio/Dashboard.vue'),
       },
       {
-        path: 'videos',
-        name: 'Videos',
-        component: () => import('@/views/Studio/Videos.vue'),
+        path: 'contents',
+        name: 'Contents',
+        component: () => import('@/views/VuetubeStudio/Contents.vue'),
+      },
+    ],
+  },
+  {
+    path: '/channel/:id',
+    components: {
+      NavBar,
+      default: () => import('@/views/Channel.vue'),
+    },
+    children: [
+      {
+        path: '/',
+        name: 'ChannelView',
+        components: {
+          default: () => import('@/views/Channel/ChannelView.vue'),
+        },
       },
     ],
   },

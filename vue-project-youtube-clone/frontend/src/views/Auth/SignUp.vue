@@ -34,7 +34,7 @@
 
                 <ValidationProvider
                   name="비밀번호"
-                  rules="required|max:6"
+                  rules="required|min:6"
                   v-slot="{ errors }">
                   <v-text-field
                     outlined
@@ -76,7 +76,6 @@
   </v-container>
 </template>
 <script>
-// import axios from 'axios';
 import Validate from '@/mixins/Validate.vue';
 
 export default {
@@ -116,56 +115,10 @@ export default {
             이메일: ['이미 가입된 이메일입니다.'],
             '채널 이름': ['이미 존재하는 채널 이름입니다.'],
           });
-
+        })
+        .finally(() => {
           this.loading = false;
         });
-
-      // await axios
-      //   .post(process.env.VUE_APP_API + '/auth/register', axiosBody)
-      //   .then(async (response) => {
-      //     console.log('auth/register - response : ', response);
-      //     localStorage.setItem('token', response.data.token);
-
-      //     // 로컬 스토리지에 유저 정보 저장
-      //     await axios
-      //       .post(
-      //         process.env.VUE_APP_API + '/auth/me',
-      //         {},
-      //         {
-      //           headers: {
-      //             Authorization: `Bearer ${response.data.token}`,
-      //           },
-      //         }
-      //       )
-      //       .then((_response) => {
-      //         console.log('/auth/me - _response : ', _response);
-      //         localStorage.setItem('user', JSON.stringify(_response.data));
-
-      //         this.$router.push({ name: 'Home' });
-      //       })
-      //       .catch((_error) => {
-      //         console.log('/auth/me - _error : ', _error);
-
-      //         // 에러문구 표시
-      //         this.$refs.signUpForm.setErrors({
-      //           이메일: ['이미 가입된 이메일입니다.'],
-      //           '채널 이름': ['이미 존재하는 채널 이름입니다.'],
-      //         });
-
-      //         this.loading = false;
-      //       });
-      //   })
-      //   .catch((error) => {
-      //     console.log('auth/register - error : ', error);
-
-      //     // 에러문구 표시
-      //     this.$refs.signUpForm.setErrors({
-      //       이메일: ['이미 가입된 이메일입니다.'],
-      //       '채널 이름': ['이미 존재하는 채널 이름입니다.'],
-      //     });
-
-      //     this.loading = false;
-      //   });
     },
   },
 };

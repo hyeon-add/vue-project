@@ -3,12 +3,14 @@
     <v-app-bar app clipped-left class="white">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <router-link class="black--text" to="/">Vuetube</router-link>
+        <router-link class="black--text" :to="{ name: 'Home' }"
+          >VuetubeStudio</router-link
+        >
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-menu offset-y left>
+      <!-- <v-menu offset-y left>
         <template v-slot:activator="{ on }">
           <v-btn outlined tile color="grey darken-1" class="mr-5" v-on="on">
             <v-icon left color="red" size="26">mdi-video-plus</v-icon>
@@ -26,7 +28,7 @@
             </v-list-item>
           </v-list>
         </v-card>
-      </v-menu>
+      </v-menu> -->
 
       <v-btn
         outlined
@@ -51,7 +53,7 @@
             <v-avatar v-if="GE_USER_DATA.photoUrl !== 'no-photo.jpg'">
               <img
                 :src="`${GE_URL}/uploads/avatar/${GE_USER_DATA.photoUrl}`"
-                :alt="GE_USER_DATA.channelName" />>
+                :alt="GE_USER_DATA.channelName" />
             </v-avatar>
 
             <span v-else>{{ channelAvatar }}</span>
@@ -68,7 +70,7 @@
                 <v-avatar v-if="GE_USER_DATA.photoUrl !== 'no-photo.jpg'">
                   <img
                     :src="`${GE_URL}/uploads/avatar/${GE_USER_DATA.photoUrl}`"
-                    :alt="GE_USER_DATA.channelName" />>
+                    :alt="GE_USER_DATA.channelName" />
                 </v-avatar>
 
                 <span v-else>{{ channelAvatar }}</span>
@@ -85,6 +87,19 @@
 
             <v-divider class="mt-3"></v-divider>
 
+            <v-list-item @click="openVideoModal">
+              <v-list-item-icon>
+                <v-icon>mdi-video-plus</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>동영상 업로드</v-list-item-title>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item router :to="`/channel/${GE_USER_DATA.id}`">
+              <v-list-item-icon>
+                <v-icon>mdi-account-box-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>내 채널</v-list-item-title>
+            </v-list-item>
             <v-list-item router to="/studio">
               <v-list-item-icon>
                 <v-icon>mdi-youtube-studio</v-icon>
@@ -97,19 +112,26 @@
               </v-list-item-icon>
               <v-list-item-title>로그아웃</v-list-item-title>
             </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item router to="/setting">
+              <v-list-item-icon>
+                <v-icon>mdi-cog-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>설정</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-card>
       </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer app clipped v-model="drawer">
-      <v-list-item exact router to="/studio">
+      <v-list-item exact router to="/VuetubeStudio">
         <v-list-item-icon>
           <v-icon>mdi-view-dashboard</v-icon>
         </v-list-item-icon>
         <v-list-item-title>대시보드</v-list-item-title>
       </v-list-item>
-      <v-list-item router to="/studio/videos">
+      <v-list-item router to="/VuetubeStudio/contents">
         <v-list-item-icon>
           <v-icon>mdi-play-box-multiple</v-icon>
         </v-list-item-icon>
@@ -118,26 +140,26 @@
     </v-navigation-drawer>
 
     <!-- 비디오 업로드 모달 -->
-    <UploadVideoModal
-      :openDialog="statusDialogUploadVideo"
-      v-on:closeDialog="closeDialogUploadVideo"></UploadVideoModal>
+    <VideoModal
+      :openDialog="statusModal"
+      v-on:closeDialog="closeVideoModal"></VideoModal>
   </nav>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex';
 
-import UploadVideoModal from '@/components/Modal/UploadVideoModal.vue';
+import VideoModal from '@/components/Modal/VideoModal.vue';
 
 export default {
   name: 'StudioNavBar',
 
   data: () => ({
     drawer: true,
-    statusDialogUploadVideo: false,
+    statusModal: false,
   }),
 
   components: {
-    UploadVideoModal,
+    VideoModal,
   },
 
   computed: {
@@ -160,29 +182,16 @@ export default {
       // 로그아웃
       AC_SIGN_OUT: 'AC_SIGN_OUT',
     }),
-    // 비디오 업로드 모달 열기
-    openDialogUploadVideo() {
-      console.log('-- open');
-      this.statusDialogUploadVideo = true;
+
+    openVideoModal() {
+      this.statusModal = true;
+      console.log('-- open : ', this.statusModal);
     },
-    closeDialogUploadVideo() {
-      console.log('-- close');
-      this.statusDialogUploadVideo = false;
+    closeVideoModal() {
+      this.statusModal = false;
+      console.log('-- close : ', this.statusModal);
     },
   },
 };
-
-// app: 컴포넌트를 어플리케이션 레이아웃은 한 부분으로 지정. 컨텐츠 크기를 동적으로 맞추는데 사용됨
-// clipped-left: v-navigation-drawer를 왼쪽부터 잘리도록 지정
-// dense: 툴바 컨텐츠와 확장의 높이를 줄임 64px -> 48px
-// depressed: 버튼 박스의 그림자를 없앰
-// fab: 버튼 둥글게
-// flat: 버튼의 배경색을 없앰
-// icon: 버튼이 아이콘임을 지정 - round & flat
-
-// v-menu: template v-slot:activator="{ on }" 사용
-// v-btn: v-on="on"
-
-// v-divider: 직선
 </script>
 <style></style>

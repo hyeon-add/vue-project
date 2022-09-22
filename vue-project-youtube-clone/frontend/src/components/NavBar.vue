@@ -3,7 +3,9 @@
     <v-app-bar app clipped-left flat class="white">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <router-link class="black--text" to="/">Vuetube</router-link>
+        <router-link class="black--text" to="/VuetubeStudio"
+          >Vuetube</router-link
+        >
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -18,6 +20,41 @@
         <v-icon left size="26">mdi-account-circle</v-icon>
         로그인
       </v-btn>
+
+      <!-- <v-menu v-else offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            depressed
+            fab
+            small
+            color="red white--text"
+            class="font-weight-bold"
+            v-on="on">
+            <v-avatar v-if="GE_USER_DATA.photoUrl !== 'no-photo.jpg'">
+              <img
+                :src="`${GE_URL}/uploads/avatar/${GE_USER_DATA.photoUrl}`"
+                :alt="GE_USER_DATA.channelName" />>
+            </v-avatar>
+
+            <span v-else>{{ channelAvatar }}</span>
+          </v-btn>
+        </template>
+        <v-list class="MenuStyle">
+          <v-list-item>
+            <v-avatar v-if="GE_USER_DATA.photoUrl !== 'no-photo.jpg'">
+              <img
+                :src="`${GE_URL}/uploads/avatar/${GE_USER_DATA.photoUrl}`"
+                :alt="GE_USER_DATA.channelName" />>
+            </v-avatar>
+          </v-list-item>
+          <v-list-item
+            ><router-link to="/VuetubeStudio"
+              >Vutube 스튜디오</router-link
+            ></v-list-item
+          >
+          <v-list-item @click="signOut">로그아웃</v-list-item>
+        </v-list>
+      </v-menu> -->
 
       <v-menu offset-y v-else>
         <template v-slot:activator="{ on }">
@@ -48,11 +85,12 @@
                 <v-avatar v-if="GE_USER_DATA.photoUrl !== 'no-photo.jpg'">
                   <img
                     :src="`${GE_URL}/uploads/avatar/${GE_USER_DATA.photoUrl}`"
-                    :alt="GE_USER_DATA.channelName" />>
+                    :alt="GE_USER_DATA.channelName" />
                 </v-avatar>
 
                 <span v-else>{{ channelAvatar }}</span>
               </v-list-item-avatar>
+
               <v-list-item-content>
                 <v-list-item-title>{{
                   GE_USER_DATA.channelName
@@ -65,7 +103,13 @@
 
             <v-divider class="mt-3"></v-divider>
 
-            <v-list-item router to="/studio">
+            <v-list-item router :to="`/channel/${GE_USER_DATA.id}`">
+              <v-list-item-icon>
+                <v-icon>mdi-account-box-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>내 채널</v-list-item-title>
+            </v-list-item>
+            <v-list-item router to="/VuetubeStudio">
               <v-list-item-icon>
                 <v-icon>mdi-youtube-studio</v-icon>
               </v-list-item-icon>
@@ -76,6 +120,15 @@
                 <v-icon>mdi-login-variant</v-icon>
               </v-list-item-icon>
               <v-list-item-title>로그아웃</v-list-item-title>
+            </v-list-item>
+
+            <v-divider></v-divider>
+
+            <v-list-item router to="/setting">
+              <v-list-item-icon>
+                <v-icon>mdi-cog-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>설정</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-card>
@@ -114,6 +167,7 @@
   </nav>
 </template>
 <script>
+import axios from 'axios';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -142,6 +196,26 @@ export default {
     ...mapActions({
       AC_SIGN_OUT: 'AC_SIGN_OUT',
     }),
+    async signOut() {
+      await axios
+        .post(
+          process.env.VUE_APP_API + '/auth/logout',
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log('signOut - response : ', response);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        })
+        .catch((error) => {
+          console.log('signOut - error : ', error);
+        });
+    },
   },
 };
 
@@ -158,4 +232,8 @@ export default {
 
 // v-divider: 직선
 </script>
-<style></style>
+<style>
+.MenuStyle {
+  width: 300px;
+}
+</style>

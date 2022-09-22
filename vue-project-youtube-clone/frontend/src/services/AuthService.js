@@ -7,9 +7,20 @@ export default {
   signUp(data) {
     return Api().post('auth/register', data);
   },
+  signOut(token) {
+    return Api().post('auth/logout', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  },
   getUserData(token) {
     return Api().post('auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     });
+  },
+  updateUserData(data) {
+    return Api().put('auth/updatedetails', data);
+  },
+  updateAvatar(formData) {
+    return Api().put('auth/avatar', formData);
   },
 };
